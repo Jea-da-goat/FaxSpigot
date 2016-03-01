@@ -179,6 +179,9 @@ public abstract class Player extends LivingEntity {
     private Optional<GlobalPos> lastDeathLocation;
     @Nullable
     public FishingHook fishing;
+    // Paper start
+    public boolean affectsSpawning = true;
+    // Paper end
 
     // CraftBukkit start
     public boolean fauxSleeping;
