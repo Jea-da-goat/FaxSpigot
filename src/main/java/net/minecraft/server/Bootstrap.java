@@ -69,7 +69,11 @@ public class Bootstrap {
                     EntitySelectorOptions.bootStrap();
                     DispenseItemBehavior.bootStrap();
                     CauldronInteraction.bootStrap();
-                    BuiltInRegistries.bootStrap();
+                    // Paper start - register custom flat bedrock
+                    BuiltInRegistries.bootStrap(() -> {
+                        net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.MATERIAL_CONDITION, new net.minecraft.resources.ResourceLocation("paper", "bedrock_condition_source"), net.minecraft.data.worldgen.SurfaceRuleData.PaperBedrockConditionSource.CODEC.codec());
+                    });
+                    // Paper end
                     Bootstrap.wrapStreams();
                 }
                 // CraftBukkit start - easier than fixing the decompile
