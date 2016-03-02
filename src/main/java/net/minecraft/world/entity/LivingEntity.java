@@ -1400,6 +1400,7 @@ public abstract class LivingEntity extends Entity {
                 }
             }
 
+            boolean knockbackCancelled = level.paperConfig().environment.disableExplosionKnockback && source.isExplosion() && this instanceof net.minecraft.world.entity.player.Player; // Paper - Disable explosion knockback
             if (flag1) {
                 if (flag) {
                     this.level.broadcastEntityEvent(this, (byte) 29);
@@ -1420,6 +1421,7 @@ public abstract class LivingEntity extends Entity {
                         b0 = 2;
                     }
 
+                    if (!knockbackCancelled) // Paper - Disable explosion knockback
                     this.level.broadcastEntityEvent(this, b0);
                 }
 
@@ -1443,6 +1445,7 @@ public abstract class LivingEntity extends Entity {
                 }
             }
 
+            if (knockbackCancelled) this.level.broadcastEntityEvent(this, (byte) 2); // Paper - Disable explosion knockback
             if (this.isDeadOrDying()) {
                 if (!this.checkTotemDeathProtection(source)) {
                     SoundEvent soundeffect = this.getDeathSound();
