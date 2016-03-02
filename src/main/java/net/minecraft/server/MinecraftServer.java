@@ -1396,6 +1396,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
 
             this.profiler.pop();
             this.profiler.pop();
+            worldserver.explosionDensityCache.clear(); // Paper - Optimize explosions
         }
 
         this.profiler.popPush("connection");
