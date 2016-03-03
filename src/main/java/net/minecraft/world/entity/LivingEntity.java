@@ -141,7 +141,7 @@ import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 // CraftBukkit end
 
-import org.bukkit.craftbukkit.SpigotTimings; // Spigot
+import co.aikar.timings.MinecraftTimings; // Paper
 
 public abstract class LivingEntity extends Entity {
 
@@ -2837,7 +2837,6 @@ public abstract class LivingEntity extends Entity {
 
     @Override
     public void tick() {
-        SpigotTimings.timerEntityBaseTick.startTiming(); // Spigot
         super.tick();
         this.updatingUsingItem();
         this.updateSwimAmount();
@@ -2879,9 +2878,7 @@ public abstract class LivingEntity extends Entity {
         }
 
         if (!this.isRemoved()) {
-            SpigotTimings.timerEntityBaseTick.stopTiming(); // Spigot
             this.aiStep();
-            SpigotTimings.timerEntityTickRest.startTiming(); // Spigot
         }
 
         double d0 = this.getX() - this.xo;
@@ -2963,8 +2960,6 @@ public abstract class LivingEntity extends Entity {
         if (this.isSleeping()) {
             this.setXRot(0.0F);
         }
-
-        SpigotTimings.timerEntityTickRest.stopTiming(); // Spigot
     }
 
     public void detectEquipmentUpdates() {
@@ -3150,7 +3145,6 @@ public abstract class LivingEntity extends Entity {
 
         this.setDeltaMovement(d4, d5, d6);
         this.level.getProfiler().push("ai");
-        SpigotTimings.timerEntityAI.startTiming(); // Spigot
         if (this.isImmobile()) {
             this.jumping = false;
             this.xxa = 0.0F;
@@ -3160,7 +3154,6 @@ public abstract class LivingEntity extends Entity {
             this.serverAiStep();
             this.level.getProfiler().pop();
         }
-        SpigotTimings.timerEntityAI.stopTiming(); // Spigot
 
         this.level.getProfiler().pop();
         this.level.getProfiler().push("jump");
@@ -3195,9 +3188,9 @@ public abstract class LivingEntity extends Entity {
         this.updateFallFlying();
         AABB axisalignedbb = this.getBoundingBox();
 
-        SpigotTimings.timerEntityAIMove.startTiming(); // Spigot
+        // SpigotTimings.timerEntityAIMove.startTiming(); // Spigot // Paper
         this.travel(new Vec3((double) this.xxa, (double) this.yya, (double) this.zza));
-        SpigotTimings.timerEntityAIMove.stopTiming(); // Spigot
+        // SpigotTimings.timerEntityAIMove.stopTiming(); // Spigot // Paper
         this.level.getProfiler().pop();
         this.level.getProfiler().push("freezing");
         boolean flag1 = this.getType().is(EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES);
@@ -3226,9 +3219,7 @@ public abstract class LivingEntity extends Entity {
             this.checkAutoSpinAttack(axisalignedbb, this.getBoundingBox());
         }
 
-        SpigotTimings.timerEntityAICollision.startTiming(); // Spigot
         this.pushEntities();
-        SpigotTimings.timerEntityAICollision.stopTiming(); // Spigot
         this.level.getProfiler().pop();
         if (!this.level.isClientSide && this.isSensitiveToWater() && this.isInWaterRainOrBubble()) {
             this.hurt(DamageSource.DROWN, 1.0F);
