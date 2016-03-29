@@ -293,6 +293,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
     public final double[] recentTps = new double[ 3 ];
     // Spigot end
     public final io.papermc.paper.configuration.PaperConfigurations paperConfigurations;
+    public static long currentTickLong = 0L; // Paper
 
     public static <S extends MinecraftServer> S spin(Function<Thread, S> serverFactory) {
         AtomicReference<S> atomicreference = new AtomicReference();
@@ -929,6 +930,9 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
             MinecraftServer.LOGGER.error("Failed to unlock level {}", this.storageSource.getLevelId(), ioexception1);
         }
         // Spigot start
+        io.papermc.paper.util.MCUtil.asyncExecutor.shutdown(); // Paper
+        try { io.papermc.paper.util.MCUtil.asyncExecutor.awaitTermination(30, java.util.concurrent.TimeUnit.SECONDS); // Paper
+        } catch (java.lang.InterruptedException ignored) {} // Paper
         if (org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) {
             MinecraftServer.LOGGER.info("Saving usercache.json");
             this.getProfileCache().save();
@@ -995,6 +999,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
                     this.lastOverloadWarning = this.nextTickTime;
                 }
 
+                ++MinecraftServer.currentTickLong; // Paper
                 if ( tickCount++ % MinecraftServer.SAMPLE_INTERVAL == 0 )
                 {
                     double currentTps = 1E3 / ( curTime - tickSection ) * MinecraftServer.SAMPLE_INTERVAL;
@@ -1230,7 +1235,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
             MinecraftServer.LOGGER.debug("Autosave finished");
             SpigotTimings.worldSaveTimer.stopTiming(); // Spigot
         }
-
+        io.papermc.paper.util.CachedLists.reset(); // Paper
         this.profiler.push("tallying");
         long l = this.tickTimes[this.tickCount % 100] = Util.getNanos() - i;
 
@@ -1292,6 +1297,11 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
             try {
                 worldserver.timings.doTick.startTiming(); // Spigot
                 worldserver.tick(shouldKeepTicking);
+                // Paper start
+                for (final io.papermc.paper.chunk.SingleThreadChunkRegionManager regionManager : worldserver.getChunkSource().chunkMap.regionManagers) {
+                    regionManager.recalculateRegions();
+                }
+                // Paper end
                 worldserver.timings.doTick.stopTiming(); // Spigot
             } catch (Throwable throwable) {
                 // Spigot Start
