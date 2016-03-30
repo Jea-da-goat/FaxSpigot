@@ -305,7 +305,7 @@ public class BuiltInRegistries {
         LOADERS.put(resourceLocation, () -> {
             return initializer.run(registry);
         });
-        WRITABLE_REGISTRY.register(key, registry, lifecycle);
+        WRITABLE_REGISTRY.register((ResourceKey) key, registry, lifecycle); // Paper - decompile fix
         return registry;
     }
 

@@ -505,7 +505,7 @@ public final class NbtUtils {
     }
 
     public static CompoundTag update(DataFixer fixer, DataFixTypes fixTypes, CompoundTag compound, int oldVersion, int targetVersion) {
-        return fixer.update(fixTypes.getType(), new Dynamic<>(NbtOps.INSTANCE, compound), oldVersion, targetVersion).getValue();
+        return (CompoundTag) fixer.update(fixTypes.getType(), new Dynamic<>(NbtOps.INSTANCE, compound), oldVersion, targetVersion).getValue(); // Paper - decompile fix
     }
 
     public static Component toPrettyComponent(Tag element) {
