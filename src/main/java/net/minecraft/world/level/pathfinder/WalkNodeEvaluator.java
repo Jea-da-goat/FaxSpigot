@@ -465,7 +465,12 @@ public class WalkNodeEvaluator extends NodeEvaluator {
                 for(int n = -1; n <= 1; ++n) {
                     if (l != 0 || n != 0) {
                         pos.set(i + l, j + m, k + n);
-                        BlockState blockState = world.getBlockState(pos);
+                        // Paper start
+                        BlockState blockState = world.getBlockStateIfLoaded(pos);
+                        if (blockState == null) {
+                            return BlockPathTypes.BLOCKED;
+                        } else {
+                        // Paper end
                         if (blockState.is(Blocks.CACTUS)) {
                             return BlockPathTypes.DANGER_CACTUS;
                         }
@@ -481,6 +486,7 @@ public class WalkNodeEvaluator extends NodeEvaluator {
                         if (world.getFluidState(pos).is(FluidTags.WATER)) {
                             return BlockPathTypes.WATER_BORDER;
                         }
+                        } // Paper
                     }
                 }
             }
@@ -490,7 +496,8 @@ public class WalkNodeEvaluator extends NodeEvaluator {
     }
 
     protected static BlockPathTypes getBlockPathTypeRaw(BlockGetter world, BlockPos pos) {
-        BlockState blockState = world.getBlockState(pos);
+        BlockState blockState = world.getBlockStateIfLoaded(pos); // Paper
+        if (blockState == null) return BlockPathTypes.BLOCKED; // Paper
         Block block = blockState.getBlock();
         Material material = blockState.getMaterial();
         if (blockState.isAir()) {
