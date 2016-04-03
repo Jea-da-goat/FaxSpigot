@@ -1458,6 +1458,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
 
     @Override
     public void updateNeighborsAt(BlockPos pos, Block sourceBlock) {
+        if (captureBlockStates) { return; } // Paper - Cancel all physics during placement
         this.neighborUpdater.updateNeighborsAtExceptFromFacing(pos, sourceBlock, (Direction) null);
     }
 
