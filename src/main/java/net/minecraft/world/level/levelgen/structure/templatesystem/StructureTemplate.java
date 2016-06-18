@@ -286,7 +286,9 @@ public class StructureTemplate {
                                         definedstructure_blockinfo.nbt.putLong("LootTableSeed", random.nextLong());
                                     }
 
+                                    tileentity.isLoadingStructure = true; // Paper
                                     tileentity.load(definedstructure_blockinfo.nbt);
+                                    tileentity.isLoadingStructure = false; // Paper
                                 }
                             }
 
