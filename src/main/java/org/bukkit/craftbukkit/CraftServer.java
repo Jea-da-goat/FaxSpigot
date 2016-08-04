@@ -1733,7 +1733,7 @@ public final class CraftServer implements Server {
             // Spigot Start
             GameProfile profile = null;
             // Only fetch an online UUID in online mode
-            if ( this.getOnlineMode() || org.spigotmc.SpigotConfig.bungee )
+            if ( this.getOnlineMode() || io.papermc.paper.configuration.GlobalConfiguration.get().proxies.isProxyOnlineMode() ) // Paper - Handle via setting
             {
                 profile = this.console.getProfileCache().get(name).orElse(null);
             }
