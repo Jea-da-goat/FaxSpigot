@@ -533,6 +533,7 @@ public final class CraftServer implements Server {
 
             if (command instanceof VanillaCommandWrapper) {
                 LiteralCommandNode<CommandSourceStack> node = (LiteralCommandNode<CommandSourceStack>) ((VanillaCommandWrapper) command).vanillaCommand;
+                dispatcher.vanillaCommandNodes.add(node); // Paper
                 if (!node.getLiteral().equals(label)) {
                     LiteralCommandNode<CommandSourceStack> clone = new LiteralCommandNode(label, node.getCommand(), node.getRequirement(), node.getRedirect(), node.getRedirectModifier(), node.isFork());
 
@@ -905,7 +906,13 @@ public final class CraftServer implements Server {
 
         // Spigot start
         if (!org.spigotmc.SpigotConfig.unknownCommandMessage.isEmpty()) {
-            sender.sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);
+            // Paper start
+            org.bukkit.event.command.UnknownCommandEvent event = new org.bukkit.event.command.UnknownCommandEvent(sender, commandLine, net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(org.spigotmc.SpigotConfig.unknownCommandMessage));
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            if (event.message() != null) {
+                sender.sendMessage(event.message());
+            }
+            // Paper end
         }
         // Spigot end
 
