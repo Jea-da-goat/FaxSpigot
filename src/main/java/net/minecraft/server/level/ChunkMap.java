@@ -896,6 +896,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
                 } else {
                     ChunkMap.TrackedEntity playerchunkmap_entitytracker = new ChunkMap.TrackedEntity(entity, i, j, entitytypes.trackDeltas());
 
+                    entity.tracker = playerchunkmap_entitytracker; // Paper - Fast access to tracker
                     this.entityMap.put(entity.getId(), playerchunkmap_entitytracker);
                     playerchunkmap_entitytracker.updatePlayers(this.level.players());
                     if (entity instanceof ServerPlayer) {
@@ -938,7 +939,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
         if (playerchunkmap_entitytracker1 != null) {
             playerchunkmap_entitytracker1.broadcastRemoved();
         }
-
+        entity.tracker = null; // Paper - We're no longer tracked
     }
 
     protected void tick() {
