@@ -1289,6 +1289,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
             return true;
         }
         // Paper end
+        if (entity.spawnReason == null) entity.spawnReason = spawnReason; // Paper
         if (entity.isRemoved()) {
             // Paper start
             if (DEBUG_ENTITIES) {
