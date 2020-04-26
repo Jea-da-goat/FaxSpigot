@@ -483,7 +483,7 @@ public class WalkNodeEvaluator extends NodeEvaluator {
                             return BlockPathTypes.DANGER_FIRE;
                         }
 
-                        if (world.getFluidState(pos).is(FluidTags.WATER)) {
+                        if (blockState.getFluidState().is(FluidTags.WATER)) {
                             return BlockPathTypes.WATER_BORDER;
                         }
                         } // Paper
@@ -514,7 +514,7 @@ public class WalkNodeEvaluator extends NodeEvaluator {
             } else if (blockState.is(Blocks.COCOA)) {
                 return BlockPathTypes.COCOA;
             } else {
-                FluidState fluidState = world.getFluidState(pos);
+                FluidState fluidState = blockState.getFluidState(); // Paper - remove another get type call
                 if (fluidState.is(FluidTags.LAVA)) {
                     return BlockPathTypes.LAVA;
                 } else if (isBurningBlock(blockState)) {
