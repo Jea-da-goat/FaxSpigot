@@ -851,15 +851,15 @@ public abstract class BlockBehaviour implements FeatureElement {
             return this.shapeExceedsCube; // Paper - moved into shape cache init
         }
 
-        public boolean useShapeForLightOcclusion() {
+        public final boolean useShapeForLightOcclusion() { // Paper
             return this.useShapeForLightOcclusion;
         }
 
-        public int getLightEmission() {
+        public final int getLightEmission() { // Paper
             return this.lightEmission;
         }
 
-        public boolean isAir() {
+        public final boolean isAir() { // Paper
             return this.isAir;
         }
 
@@ -933,7 +933,7 @@ public abstract class BlockBehaviour implements FeatureElement {
             }
         }
 
-        public boolean canOcclude() {
+        public final boolean canOcclude() { // Paper
             return this.canOcclude;
         }
 
@@ -1135,11 +1135,11 @@ public abstract class BlockBehaviour implements FeatureElement {
             return this.getBlock() == block;
         }
 
-        public FluidState getFluidState() {
+        public final FluidState getFluidState() { // Paper
             return this.fluidState;
         }
 
-        public boolean isRandomlyTicking() {
+        public final boolean isRandomlyTicking() { // Paper
             return this.isRandomlyTicking;
         }
 
