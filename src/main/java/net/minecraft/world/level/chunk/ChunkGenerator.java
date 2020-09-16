@@ -121,6 +121,26 @@ public abstract class ChunkGenerator {
 
     @Nullable
     public Pair<BlockPos, Holder<Structure>> findNearestMapStructure(ServerLevel world, HolderSet<Structure> structures, BlockPos center, int radius, boolean skipReferencedStructures) {
+        // Paper start - StructureLocateEvent
+        final org.bukkit.World bukkitWorld = world.getWorld();
+        final org.bukkit.Location origin = io.papermc.paper.util.MCUtil.toLocation(world, center);
+        final var paperRegistry = io.papermc.paper.registry.PaperRegistry.getRegistry(io.papermc.paper.registry.RegistryKey.CONFIGURED_STRUCTURE_REGISTRY);
+        final List<io.papermc.paper.world.structure.ConfiguredStructure> configuredStructures = new ArrayList<>();
+        paperRegistry.convertToApi(structures, configuredStructures::add, false); // gracefully handle missing api, use tests to check (or exclude)
+        if (!configuredStructures.isEmpty()) {
+            final io.papermc.paper.event.world.StructuresLocateEvent event = new io.papermc.paper.event.world.StructuresLocateEvent(bukkitWorld, origin, configuredStructures, radius, skipReferencedStructures);
+            if (!event.callEvent()) {
+                return null;
+            }
+            if (event.getResult() != null) {
+                return Pair.of(io.papermc.paper.util.MCUtil.toBlockPosition(event.getResult().position()), paperRegistry.getMinecraftHolder(event.getResult().configuredStructure()));
+            }
+            center = io.papermc.paper.util.MCUtil.toBlockPosition(event.getOrigin());
+            radius = event.getRadius();
+            skipReferencedStructures = event.shouldFindUnexplored();
+            structures = HolderSet.direct(paperRegistry::getMinecraftHolder, event.getConfiguredStructures());
+        }
+        // Paper end
         ChunkGeneratorStructureState chunkgeneratorstructurestate = world.getChunkSource().getGeneratorState();
         Map<StructurePlacement, Set<Holder<Structure>>> map = new Object2ObjectArrayMap();
         Iterator iterator = structures.iterator();
