@@ -209,6 +209,13 @@ public class CraftWorld extends CraftRegionAccessor implements World {
         this.biomeProvider = biomeProvider;
 
         this.environment = env;
+        // Paper start - per world spawn limits
+        for (SpawnCategory spawnCategory : SpawnCategory.values()) {
+            if (CraftSpawnCategory.isValidForLimits(spawnCategory)) {
+                setSpawnLimit(spawnCategory, this.world.paperConfig().entities.spawning.spawnLimits.getInt(CraftSpawnCategory.toNMS(spawnCategory)));
+            }
+        }
+        // Paper end
     }
 
     @Override
