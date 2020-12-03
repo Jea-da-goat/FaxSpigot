@@ -1152,7 +1152,7 @@ public abstract class LivingEntity extends Entity {
         if (this.getMobType() == MobType.UNDEAD) {
             MobEffect mobeffectlist = effect.getEffect();
 
-            if (mobeffectlist == MobEffects.REGENERATION || mobeffectlist == MobEffects.POISON) {
+            if ((mobeffectlist == MobEffects.REGENERATION || mobeffectlist == MobEffects.POISON) && this.level.paperConfig().entities.mobEffects.undeadImmuneToCertainEffects) { // Paper
                 return false;
             }
         }
