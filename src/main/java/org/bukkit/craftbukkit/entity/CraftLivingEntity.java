@@ -913,5 +913,15 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     public void playPickupItemAnimation(org.bukkit.entity.Item item, int quantity) {
         getHandle().take(((CraftItem) item).getHandle(), quantity);
     }
+
+    @Override
+    public float getHurtDirection() {
+        return getHandle().hurtDir;
+    }
+
+    @Override
+    public void setHurtDirection(float hurtDirection) {
+        getHandle().hurtDir = hurtDirection;
+    }
     // Paper end
 }
