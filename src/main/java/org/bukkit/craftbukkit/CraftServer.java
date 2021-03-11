@@ -1142,7 +1142,7 @@ public final class CraftServer implements Server {
         this.console.addLevel(internal);
 
         this.getServer().prepareLevels(internal.getChunkSource().chunkMap.progressListener, internal);
-        internal.entityManager.tick(); // SPIGOT-6526: Load pending entities so they are available to the API
+        //internal.entityManager.tick(); // SPIGOT-6526: Load pending entities so they are available to the API // Paper - rewrite chunk system
 
         this.pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
         return internal.getWorld();
@@ -1186,7 +1186,7 @@ public final class CraftServer implements Server {
             }
 
             handle.getChunkSource().close(save);
-            handle.entityManager.close(save); // SPIGOT-6722: close entityManager
+            // handle.entityManager.close(save); // SPIGOT-6722: close entityManager // Paper - rewrite chunk system
             handle.convertable.close();
         } catch (Exception ex) {
             this.getLogger().log(Level.SEVERE, null, ex);
@@ -2001,7 +2001,7 @@ public final class CraftServer implements Server {
 
     @Override
     public boolean isPrimaryThread() {
-        return Thread.currentThread().equals(console.serverThread) || this.console.hasStopped() || !org.spigotmc.AsyncCatcher.enabled; // All bets are off if we have shut down (e.g. due to watchdog)
+        return io.papermc.paper.util.TickThread.isTickThread(); // Paper - rewrite chunk system
     }
 
     // Paper start

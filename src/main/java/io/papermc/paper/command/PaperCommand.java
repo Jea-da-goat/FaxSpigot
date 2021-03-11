@@ -1,5 +1,6 @@
 package io.papermc.paper.command;
 
+import io.papermc.paper.command.subcommands.ChunkDebugCommand;
 import io.papermc.paper.command.subcommands.EntityCommand;
 import io.papermc.paper.command.subcommands.FixLightCommand;
 import io.papermc.paper.command.subcommands.HeapDumpCommand;
@@ -42,6 +43,7 @@ public final class PaperCommand extends Command {
         commands.put(Set.of("reload"), new ReloadCommand());
         commands.put(Set.of("version"), new VersionCommand());
         commands.put(Set.of("fixlight"), new FixLightCommand());
+        commands.put(Set.of("debug", "chunkinfo", "holderinfo"), new ChunkDebugCommand());
 
         return commands.entrySet().stream()
             .flatMap(entry -> entry.getKey().stream().map(s -> Map.entry(s, entry.getValue())))
