@@ -1419,9 +1419,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
         LevelChunk chunk1;
 
         if (chunk instanceof LevelChunk) {
-            LevelChunk chunk1 = (LevelChunk) chunk;
-
-            chunk1 = chunk1;
+            chunk1 = (LevelChunk) chunk; // Paper - remap fix
         } else {
             chunk1 = this.level.getChunk(chunkcoordintpair.x, chunkcoordintpair.z);
         }
