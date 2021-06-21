@@ -220,7 +220,9 @@ public class ServerLevel extends Level implements WorldGenLevel {
     public final UUID uuid;
     public boolean hasPhysicsEvent = true; // Paper
     public static Throwable getAddToWorldStackTrace(Entity entity) {
-        return new Throwable(entity + " Added to world at " + new java.util.Date());
+        final Throwable thr = new Throwable(entity + " Added to world at " + new java.util.Date());
+        io.papermc.paper.util.StacktraceDeobfuscator.INSTANCE.deobfuscateThrowable(thr);
+        return thr;
     }
 
     @Override public LevelChunk getChunkIfLoaded(int x, int z) { // Paper - this was added in world too but keeping here for NMS ABI
@@ -1327,7 +1329,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
         if (entity.isRemoved()) {
             // Paper start
             if (DEBUG_ENTITIES) {
-                new Throwable("Tried to add entity " + entity + " but it was marked as removed already").printStackTrace(); // CraftBukkit
+                io.papermc.paper.util.TraceUtil.dumpTraceForThread("Tried to add entity " + entity + " but it was marked as removed already"); // CraftBukkit
                 getAddToWorldStackTrace(entity).printStackTrace();
             }
             // Paper end
