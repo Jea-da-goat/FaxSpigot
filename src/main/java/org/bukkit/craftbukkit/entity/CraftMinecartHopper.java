@@ -39,4 +39,20 @@ public final class CraftMinecartHopper extends CraftMinecartContainer implements
     public void setEnabled(boolean enabled) {
         ((MinecartHopper) getHandle()).setEnabled(enabled);
     }
+    // Paper start
+    @Override
+    public net.minecraft.world.entity.vehicle.MinecartHopper getHandle() {
+        return (net.minecraft.world.entity.vehicle.MinecartHopper) super.getHandle();
+    }
+
+    @Override
+    public int getPickupCooldown() {
+        return this.getHandle().cooldownTime;
+    }
+
+    @Override
+    public void setPickupCooldown(int cooldown) {
+        this.getHandle().setCooldown(cooldown);
+    }
+    // Paper end
 }
