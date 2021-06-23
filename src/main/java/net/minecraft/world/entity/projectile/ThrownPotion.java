@@ -100,6 +100,11 @@ public class ThrownPotion extends ThrowableItemProjectile implements ItemSupplie
     @Override
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
+        // Paper start - More projectile API
+        this.splash(hitResult);
+    }
+    public void splash(@org.jetbrains.annotations.Nullable HitResult hitResult) {
+        // Paper end - More projectile API
         if (!this.level.isClientSide) {
             ItemStack itemstack = this.getItem();
             Potion potionregistry = PotionUtils.getPotion(itemstack);
@@ -113,7 +118,7 @@ public class ThrownPotion extends ThrowableItemProjectile implements ItemSupplie
                 if (this.isLingering()) {
                     showParticles = this.makeAreaOfEffectCloud(itemstack, potionregistry); // Paper
                 } else {
-                    showParticles = this.applySplash(list, hitResult.getType() == HitResult.Type.ENTITY ? ((EntityHitResult) hitResult).getEntity() : null); // Paper
+                    showParticles = this.applySplash(list, hitResult != null && hitResult.getType() == HitResult.Type.ENTITY ? ((EntityHitResult) hitResult).getEntity() : null); // Paper - nullable hitResult
                 }
             }
 
