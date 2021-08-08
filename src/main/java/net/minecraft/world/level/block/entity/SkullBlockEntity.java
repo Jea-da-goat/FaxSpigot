@@ -140,7 +140,7 @@ public class SkullBlockEntity extends BlockEntity {
     public static void updateGameprofile(@Nullable GameProfile owner, Consumer<GameProfile> callback) {
         if (owner != null && !StringUtil.isNullOrEmpty(owner.getName()) && (!owner.isComplete() || !owner.getProperties().containsKey("textures")) && SkullBlockEntity.profileCache != null && SkullBlockEntity.sessionService != null) {
             SkullBlockEntity.profileCache.getAsync(owner.getName(), (optional) -> {
-                Util.backgroundExecutor().execute(() -> {
+                Util.PROFILE_EXECUTOR.execute(() -> { // Paper - not a good idea to use BLOCKING OPERATIONS on the worldgen executor
                     Util.ifElse(optional, (gameprofile1) -> {
                         Property property = (Property) Iterables.getFirst(gameprofile1.getProperties().get("textures"), (Object) null);
 
