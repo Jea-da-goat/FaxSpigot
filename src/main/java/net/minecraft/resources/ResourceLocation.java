@@ -200,7 +200,7 @@ public class ResourceLocation implements Comparable<ResourceLocation> {
 
     private static String assertValidNamespace(String namespace, String path) {
         if (!isValidNamespace(namespace)) {
-            throw new ResourceLocationException("Non [a-z0-9_.-] character in namespace of location: " + namespace + ":" + path);
+            throw new ResourceLocationException("Non [a-z0-9_.-] character in namespace of location: " + org.apache.commons.lang3.StringUtils.normalizeSpace(namespace) + ":" + org.apache.commons.lang3.StringUtils.normalizeSpace(path)); // Paper
         } else {
             return namespace;
         }
@@ -221,7 +221,7 @@ public class ResourceLocation implements Comparable<ResourceLocation> {
 
     private static String assertValidPath(String namespace, String path) {
         if (!isValidPath(path)) {
-            throw new ResourceLocationException("Non [a-z0-9/._-] character in path of location: " + namespace + ":" + path);
+            throw new ResourceLocationException("Non [a-z0-9/._-] character in path of location: " + namespace + ":" + org.apache.commons.lang3.StringUtils.normalizeSpace(path)); // Paper
         } else {
             return path;
         }
