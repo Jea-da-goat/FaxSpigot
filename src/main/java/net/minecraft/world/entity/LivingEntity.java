@@ -265,6 +265,7 @@ public abstract class LivingEntity extends Entity {
     public boolean bukkitPickUpLoot;
     public org.bukkit.craftbukkit.entity.CraftLivingEntity getBukkitLivingEntity() { return (org.bukkit.craftbukkit.entity.CraftLivingEntity) super.getBukkitEntity(); } // Paper
     public boolean silentDeath = false; // Paper - mark entity as dying silently for cancellable death event
+    public net.kyori.adventure.util.TriState frictionState = net.kyori.adventure.util.TriState.NOT_SET; // Paper
 
     @Override
     public float getBukkitYaw() {
@@ -705,7 +706,7 @@ public abstract class LivingEntity extends Entity {
     }
 
     public boolean shouldDiscardFriction() {
-        return this.discardFriction;
+        return !this.frictionState.toBooleanOrElse(!this.discardFriction); // Paper
     }
 
     public void setDiscardFriction(boolean noDrag) {
@@ -750,6 +751,11 @@ public abstract class LivingEntity extends Entity {
 
     @Override
     public void addAdditionalSaveData(CompoundTag nbt) {
+        // Paper start
+        if (this.frictionState != net.kyori.adventure.util.TriState.NOT_SET) {
+            nbt.putString("Paper.FrictionState", this.frictionState.toString());
+        }
+        // Paper end
         nbt.putFloat("Health", this.getHealth());
         nbt.putShort("HurtTime", (short) this.hurtTime);
         nbt.putInt("HurtByTimestamp", this.lastHurtByMobTimestamp);
@@ -792,6 +798,15 @@ public abstract class LivingEntity extends Entity {
             absorptionAmount = 0;
         }
         this.setAbsorptionAmount(absorptionAmount);
+
+        if (nbt.contains("Paper.FrictionState")) {
+            String fs = nbt.getString("Paper.FrictionState");
+            try {
+                frictionState = net.kyori.adventure.util.TriState.valueOf(fs);
+            } catch (Exception ignored) {
+                LOGGER.error("Unknown friction state " + fs + " for " + this);
+            }
+        }
         // Paper end
         if (nbt.contains("Attributes", 9) && this.level != null && !this.level.isClientSide) {
             this.getAttributes().load(nbt.getList("Attributes", 10));
