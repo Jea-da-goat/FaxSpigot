@@ -74,6 +74,7 @@ public class DamageSource {
         return this;
     }
     // Paper end
+    public @Nullable org.bukkit.block.BlockState explodedBlockState; // Paper - add exploded state
 
     public static DamageSource fallingBlock(Entity attacker) {
         return (new EntityDamageSource("fallingBlock", attacker)).damageHelmet();
@@ -147,8 +148,16 @@ public class DamageSource {
         return (new EntityDamageSource("sonic_boom", attacker)).bypassArmor().bypassEnchantments().setMagic();
     }
 
+    @Deprecated @io.papermc.paper.annotation.DoNotUse // Paper
     public static DamageSource badRespawnPointExplosion(Vec3 pos) {
-        return new BadRespawnPointDamage(pos);
+        // Paper start
+        return badRespawnPointExplosion(pos, null);
+    }
+    public static DamageSource badRespawnPointExplosion(Vec3 pos, @Nullable org.bukkit.block.BlockState explodedBlockState) {
+        DamageSource source = new BadRespawnPointDamage(pos);
+        source.explodedBlockState = explodedBlockState;
+        return source;
+        // Paper end
     }
 
     public String toString() {
