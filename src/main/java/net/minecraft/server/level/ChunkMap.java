@@ -630,7 +630,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
 
     }
 
-    public void updateChunkTracking(ServerPlayer player, ChunkPos pos, MutableObject<ClientboundLevelChunkWithLightPacket> packet, boolean oldWithinViewDistance, boolean newWithinViewDistance) { // Paper - public
+    public void updateChunkTracking(ServerPlayer player, ChunkPos pos, MutableObject<java.util.Map<Object, ClientboundLevelChunkWithLightPacket>> packet, boolean oldWithinViewDistance, boolean newWithinViewDistance) { // Paper - public // Paper - Anti-Xray - Bypass
         if (player.level == this.level) {
             if (newWithinViewDistance && !oldWithinViewDistance) {
                 ChunkHolder playerchunk = this.getVisibleChunkIfPresent(pos.toLong());
@@ -1123,21 +1123,26 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
 
         ServerPlayer entityplayer;
 
+        java.util.Map<Object, net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket> refreshPackets = new java.util.HashMap<>(); // Paper - Anti-Xray - Bypass
         for (Iterator iterator = this.getPlayers(chunkcoordintpair, false).iterator(); iterator.hasNext(); entityplayer.trackChunk(chunkcoordintpair, (Packet) mutableobject.getValue())) {
             entityplayer = (ServerPlayer) iterator.next();
-            if (mutableobject.getValue() == null) {
-                mutableobject.setValue(new ClientboundLevelChunkWithLightPacket(chunk1, this.lightEngine, (BitSet) null, (BitSet) null, true));
-            }
+            Boolean shouldModify = chunk1.getLevel().chunkPacketBlockController.shouldModify(entityplayer, chunk1);
+            mutableobject.setValue(refreshPackets.computeIfAbsent(shouldModify, s -> new ClientboundLevelChunkWithLightPacket(chunk1, this.lightEngine, (BitSet) null, (BitSet) null, true, (Boolean) s))); // Paper - Anti-Xray - Bypass
         }
 
     }
 
-    private void playerLoadedChunk(ServerPlayer player, MutableObject<ClientboundLevelChunkWithLightPacket> cachedDataPacket, LevelChunk chunk) {
-        if (cachedDataPacket.getValue() == null) {
-            cachedDataPacket.setValue(new ClientboundLevelChunkWithLightPacket(chunk, this.lightEngine, (BitSet) null, (BitSet) null, true));
+    // Paper start - Anti-Xray - Bypass
+    private void playerLoadedChunk(ServerPlayer player, MutableObject<java.util.Map<Object, ClientboundLevelChunkWithLightPacket>> cachedDataPackets, LevelChunk chunk) {
+        if (cachedDataPackets.getValue() == null) {
+            cachedDataPackets.setValue(new java.util.HashMap<>());
         }
 
-        player.trackChunk(chunk.getPos(), (Packet) cachedDataPacket.getValue());
+        Boolean shouldModify = chunk.getLevel().chunkPacketBlockController.shouldModify(player, chunk);
+        player.trackChunk(chunk.getPos(), (Packet) cachedDataPackets.getValue().computeIfAbsent(shouldModify, (s) -> {
+            return new ClientboundLevelChunkWithLightPacket(chunk, this.lightEngine, (BitSet) null, (BitSet) null, true, (Boolean) s);
+        }));
+        // Paper end
         DebugPackets.sendPoiPacketsForChunk(this.level, chunk.getPos());
         List<Entity> list = Lists.newArrayList();
         List<Entity> list1 = Lists.newArrayList();
