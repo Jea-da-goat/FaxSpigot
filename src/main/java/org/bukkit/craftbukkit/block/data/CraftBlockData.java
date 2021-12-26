@@ -652,4 +652,10 @@ public class CraftBlockData implements BlockData {
 
         return this.state.isFaceSturdy(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, CraftBlock.blockFaceToNotch(face), CraftBlockSupport.toNMS(support));
     }
+    // Paper start - Block tick API
+    @Override
+    public boolean isRandomlyTicked() {
+        return this.state.isRandomlyTicking();
+    }
+    // Paper end
 }
