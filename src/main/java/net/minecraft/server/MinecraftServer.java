@@ -1308,6 +1308,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
             this.executeMidTickTasks(); // Paper - execute chunk tasks mid tick
             return true;
         } else {
+            boolean ret = false; // Paper - force execution of all worlds, do not just bias the first
             if (this.haveTime()) {
                 Iterator iterator = this.getAllLevels().iterator();
 
@@ -1315,12 +1316,12 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
                     ServerLevel worldserver = (ServerLevel) iterator.next();
 
                     if (worldserver.getChunkSource().pollTask()) {
-                        return true;
+                        ret = true; // Paper - force execution of all worlds, do not just bias the first
                     }
                 }
             }
 
-            return false;
+            return ret; // Paper - force execution of all worlds, do not just bias the first
         }
     }
 
