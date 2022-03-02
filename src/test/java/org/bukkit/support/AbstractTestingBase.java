@@ -49,6 +49,15 @@ public abstract class AbstractTestingBase {
         layers = WorldLoader.loadAndReplaceLayer(resourceManager, layers, RegistryLayer.WORLDGEN, RegistryDataLoader.WORLDGEN_REGISTRIES);
         REGISTRY_CUSTOM = layers.compositeAccess().freeze();
         io.papermc.paper.testing.DummyServer.setup(); // Paper
+        // Paper start
+        try {
+            java.lang.reflect.Field field = io.papermc.paper.registry.PaperRegistry.class.getDeclaredField("REGISTRY_ACCESS");
+            field.trySetAccessible();
+            field.set(null, com.google.common.base.Suppliers.ofInstance(REGISTRY_CUSTOM));
+        } catch (ReflectiveOperationException ex) {
+            throw new IllegalStateException("Could not reflectively set RegistryAccess in PaperRegistry", ex);
+        }
+        // Paper end
         // Register vanilla pack
         DATA_PACK = ReloadableServerResources.loadResources(resourceManager, REGISTRY_CUSTOM, FeatureFlags.REGISTRY.allFlags(), Commands.CommandSelection.DEDICATED, 0, MoreExecutors.directExecutor(), MoreExecutors.directExecutor()).join();
         // Bind tags
