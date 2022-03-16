@@ -1318,7 +1318,7 @@ public final class CraftServer implements Server {
 
         try {
             if (save) {
-                handle.save(null, true, true);
+                handle.save(null, true, false); // Paper - don't disable saving
             }
 
             handle.getChunkSource().close(save);
