@@ -247,9 +247,15 @@ public class Creeper extends Monster implements PowerableMob {
             this.level.playSound(player, this.getX(), this.getY(), this.getZ(), soundeffect, this.getSoundSource(), 1.0F, this.random.nextFloat() * 0.4F + 0.8F);
             if (!this.level.isClientSide) {
                 this.ignite();
+                if (itemstack.isDamageableItem()) { // Paper - only call hurtAndBreak for a damageable item - MC-257875
                 itemstack.hurtAndBreak(1, player, (entityhuman1) -> {
                     entityhuman1.broadcastBreakEvent(hand);
                 });
+                // Paper start - just consume the item - MC-257875
+                } else if (!player.getAbilities().instabuild) {
+                    itemstack.shrink(1);
+                }
+                // Paper end
             }
 
             return InteractionResult.sidedSuccess(this.level.isClientSide);

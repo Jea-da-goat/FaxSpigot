@@ -48,7 +48,7 @@ public class EntityDamageSource extends DamageSource {
 
     @Override
     public boolean scalesWithDifficulty() {
-        return this.entity instanceof LivingEntity && !(this.entity instanceof Player);
+        return super.scalesWithDifficulty() || this.entity instanceof LivingEntity && !(this.entity instanceof Player); // Paper - fix MC-258535 - respect the scalesWithDifficulty override
     }
 
     @Nullable

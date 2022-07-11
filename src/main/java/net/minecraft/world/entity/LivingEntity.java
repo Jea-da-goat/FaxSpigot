@@ -2207,8 +2207,10 @@ public abstract class LivingEntity extends Entity {
                 // CraftBukkit end
                 float f3 = this.getHealth();
 
-                this.setHealth(f3 - f);
+                // Paper start - MC-121048
                 this.getCombatTracker().recordDamage(damagesource, f3, f);
+                this.setHealth(f3 - f);
+                // Paper end
                 // CraftBukkit start
                 if (!human) {
                     this.setAbsorptionAmount(this.getAbsorptionAmount() - f);
