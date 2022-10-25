@@ -2,6 +2,7 @@ package io.papermc.paper.command;
 
 import io.papermc.paper.command.subcommands.ChunkDebugCommand;
 import io.papermc.paper.command.subcommands.DumpItemCommand;
+import io.papermc.paper.command.subcommands.DumpListenersCommand;
 import io.papermc.paper.command.subcommands.EntityCommand;
 import io.papermc.paper.command.subcommands.FixLightCommand;
 import io.papermc.paper.command.subcommands.HeapDumpCommand;
@@ -50,6 +51,7 @@ public final class PaperCommand extends Command {
         commands.put(Set.of("syncloadinfo"), new SyncLoadInfoCommand());
         commands.put(Set.of("dumpitem"), new DumpItemCommand());
         commands.put(Set.of("mobcaps", "playermobcaps"), new MobcapsCommand());
+        commands.put(Set.of("dumplisteners"), new DumpListenersCommand());
 
         return commands.entrySet().stream()
             .flatMap(entry -> entry.getKey().stream().map(s -> Map.entry(s, entry.getValue())))
