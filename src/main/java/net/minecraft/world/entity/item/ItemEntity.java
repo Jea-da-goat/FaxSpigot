@@ -96,7 +96,7 @@ public class ItemEntity extends Entity {
         Level world = this.level;
 
         Objects.requireNonNull(this.level);
-        return (Entity) Util.mapNullable(uuid, world::getPlayerByUUID);
+        return (Entity) Util.mapNullable(uuid, world::getGlobalPlayerByUUID); // Paper - check all players
     }
 
     @Override

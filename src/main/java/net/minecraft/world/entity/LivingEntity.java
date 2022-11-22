@@ -3609,7 +3609,7 @@ public abstract class LivingEntity extends Entity {
     }
 
     public void onItemPickup(ItemEntity item) {
-        net.minecraft.world.entity.player.Player entityhuman = item.getThrower() != null ? this.level.getPlayerByUUID(item.getThrower()) : null;
+        net.minecraft.world.entity.player.Player entityhuman = item.getThrower() != null ? this.level.getGlobalPlayerByUUID(item.getThrower()) : null; // Paper - check all players
 
         if (entityhuman instanceof ServerPlayer) {
             CriteriaTriggers.THROWN_ITEM_PICKED_UP_BY_ENTITY.trigger((ServerPlayer) entityhuman, item.getItem(), this);
