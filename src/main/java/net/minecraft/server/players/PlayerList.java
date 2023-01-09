@@ -297,7 +297,7 @@ public abstract class PlayerList {
 
         playerconnection.teleport(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
         player.sendServerStatus(this.server.getStatus());
-        player.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(this.players));
+        // player.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(this.players)); // Paper - use single player info update packet
         this.players.add(player);
         this.playersByName.put(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT), player); // Spigot
         this.playersByUUID.put(player.getUUID(), player);
@@ -333,6 +333,7 @@ public abstract class PlayerList {
         // CraftBukkit start - sendAll above replaced with this loop
         ClientboundPlayerInfoUpdatePacket packet = ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(player));
 
+        final List<ServerPlayer> onlinePlayers = Lists.newArrayListWithExpectedSize(this.players.size() - 1); // Paper - use single player info update packet
         for (int i = 0; i < this.players.size(); ++i) {
             ServerPlayer entityplayer1 = (ServerPlayer) this.players.get(i);
 
@@ -340,12 +341,17 @@ public abstract class PlayerList {
                 entityplayer1.connection.send(packet);
             }
 
-            if (!bukkitPlayer.canSee(entityplayer1.getBukkitEntity())) {
+            if (entityplayer1 == player || !bukkitPlayer.canSee(entityplayer1.getBukkitEntity())) { // Paper - don't include joining player
                 continue;
             }
 
-            player.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityplayer1)));
+            onlinePlayers.add(entityplayer1); // Paper - use single player info update packet
         }
+        // Paper start - use single player info update packet
+        if (!onlinePlayers.isEmpty()) {
+            player.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(onlinePlayers));
+        }
+        // Paper end
         player.sentListPacket = true;
         player.supressTrackerForLogin = false; // Paper
         ((ServerLevel)player.level).getChunkSource().chunkMap.addEntity(player); // Paper - track entity now
