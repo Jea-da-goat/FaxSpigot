@@ -1068,17 +1068,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         this.sendSignChange0(components, loc, dyeColor, hasGlowingText); // Paper
     }
 
+    // Paper start
     @Override
-    public void sendEquipmentChange(LivingEntity entity, EquipmentSlot slot, ItemStack item) {
+    public void sendEquipmentChange(LivingEntity entity, Map<EquipmentSlot, ItemStack> equipmentChanges) {
         Preconditions.checkArgument(entity != null, "entity must not be null");
-        Preconditions.checkArgument(slot != null, "slot must not be null");
-        Preconditions.checkArgument(item != null, "item must not be null");
+        Preconditions.checkNotNull(equipmentChanges, "equipmentChanges must not be null");
 
         if (this.getHandle().connection == null) return;
 
-        List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> equipment = Arrays.asList(
-                new Pair<>(CraftEquipmentSlot.getNMS(slot), CraftItemStack.asNMSCopy(item))
-        );
+        List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> equipment = new ArrayList<>(equipmentChanges.size());
+        for (Map.Entry<EquipmentSlot, ItemStack> entry : equipmentChanges.entrySet()) {
+            Preconditions.checkNotNull(entry.getKey(), "EquipmentSlot key must not be null");
+            Preconditions.checkNotNull(entry.getValue(), "ItemStack value must not be null");
+            equipment.add(new Pair<>(CraftEquipmentSlot.getNMS(entry.getKey()), CraftItemStack.asNMSCopy(entry.getValue())));
+        }
+        // Paper end
 
         this.getHandle().connection.send(new ClientboundSetEquipmentPacket(entity.getEntityId(), equipment));
     }
