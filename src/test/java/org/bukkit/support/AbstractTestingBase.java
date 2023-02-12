@@ -43,7 +43,12 @@ public abstract class AbstractTestingBase {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
         // Set up resource manager
-        MultiPackResourceManager resourceManager = new MultiPackResourceManager(PackType.SERVER_DATA, Collections.singletonList(new ServerPacksSource().getVanillaPack()));
+        // Paper start - make sure to actually load the packs you add API for
+        final List<net.minecraft.server.packs.PackResources> packs = new java.util.ArrayList<>();
+        // don't worry about closing them, the only pack types should be VanillaPackResources (empty close) and PackPackResources (also empty close)
+        new ServerPacksSource().loadPacks(pack -> packs.add(pack.open()));
+        final MultiPackResourceManager resourceManager = new MultiPackResourceManager(PackType.SERVER_DATA, packs);
+        // Paper end
         // add tags and loot tables for unit tests
         LayeredRegistryAccess<RegistryLayer> layers = RegistryLayer.createRegistryAccess();
         layers = WorldLoader.loadAndReplaceLayer(resourceManager, layers, RegistryLayer.WORLDGEN, RegistryDataLoader.WORLDGEN_REGISTRIES);
