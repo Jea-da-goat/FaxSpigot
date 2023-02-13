@@ -2,7 +2,6 @@ package org.bukkit.support;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.MoreExecutors;
-import java.util.Collections;
 import java.util.List;
 import net.minecraft.SharedConstants;
 import net.minecraft.commands.Commands;
@@ -49,6 +48,7 @@ public abstract class AbstractTestingBase {
         LayeredRegistryAccess<RegistryLayer> layers = RegistryLayer.createRegistryAccess();
         layers = WorldLoader.loadAndReplaceLayer(resourceManager, layers, RegistryLayer.WORLDGEN, RegistryDataLoader.WORLDGEN_REGISTRIES);
         REGISTRY_CUSTOM = layers.compositeAccess().freeze();
+        io.papermc.paper.testing.DummyServer.setup(); // Paper
         // Register vanilla pack
         DATA_PACK = ReloadableServerResources.loadResources(resourceManager, REGISTRY_CUSTOM, FeatureFlags.REGISTRY.allFlags(), Commands.CommandSelection.DEDICATED, 0, MoreExecutors.directExecutor(), MoreExecutors.directExecutor()).join();
         // Bind tags
@@ -56,7 +56,6 @@ public abstract class AbstractTestingBase {
         // Biome shortcut
         BIOMES = REGISTRY_CUSTOM.registryOrThrow(Registries.BIOME);
 
-        DummyServer.setup();
         DummyEnchantments.setup();
 
         ImmutableList.Builder<Material> builder = ImmutableList.builder();

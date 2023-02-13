@@ -12,6 +12,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-iostreams:2.19.0") // Paper - remove exclusion
     implementation("org.ow2.asm:asm:9.3")
     implementation("org.ow2.asm:asm-commons:9.3") // Paper - ASM event executor generation
+    testImplementation("org.mockito:mockito-core:4.9.0") // Paper - switch to mockito
     implementation("commons-lang:commons-lang:2.6")
     runtimeOnly("org.xerial:sqlite-jdbc:3.36.0.3")
     runtimeOnly("mysql:mysql-connector-java:8.0.29")
