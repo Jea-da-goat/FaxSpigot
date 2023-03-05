@@ -33,7 +33,7 @@ public class TileEntitySkull extends TileEntity {
     @Nullable
     public GameProfile owner;
     @Nullable
-    private MinecraftKey noteBlockSound;
+    public MinecraftKey noteBlockSound; // PAIL private->public
     private int animationTickCount;
     private boolean isAnimating;
 
@@ -148,9 +148,12 @@ public class TileEntitySkull extends TileEntity {
                             gameprofile1 = TileEntitySkull.sessionService.fillProfileProperties(gameprofile1, true);
                         }
 
+                        // CraftBukkit start - decompile error
+                        final GameProfile finalgameprofile1 = gameprofile1;
                         TileEntitySkull.mainThreadExecutor.execute(() -> {
-                            TileEntitySkull.profileCache.add(gameprofile1);
-                            consumer.accept(gameprofile1);
+                            TileEntitySkull.profileCache.add(finalgameprofile1);
+                            consumer.accept(finalgameprofile1);
+                            // CraftBukkit end
                         });
                     }, () -> {
                         TileEntitySkull.mainThreadExecutor.execute(() -> {

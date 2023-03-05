@@ -74,6 +74,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AxisAlignedBB;
 import net.minecraft.world.phys.Vec3D;
 
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason; // CraftBukkit
+
 public abstract class EntityHorseAbstract extends EntityAnimal implements IInventoryListener, HasCustomInventoryScreen, IJumpable, ISaddleable {
 
     public static final int EQUIPMENT_SLOT_OFFSET = 400;
@@ -113,6 +115,7 @@ public abstract class EntityHorseAbstract extends EntityAnimal implements IInven
     private float mouthAnimO;
     protected boolean canGallop = true;
     protected int gallopSoundCounter;
+    public int maxDomestication = 100; // CraftBukkit - store max domestication value
 
     protected EntityHorseAbstract(EntityTypes<? extends EntityHorseAbstract> entitytypes, World world) {
         super(entitytypes, world);
@@ -312,7 +315,7 @@ public abstract class EntityHorseAbstract extends EntityAnimal implements IInven
     public void createInventory() {
         InventorySubcontainer inventorysubcontainer = this.inventory;
 
-        this.inventory = new InventorySubcontainer(this.getInventorySize());
+        this.inventory = new InventorySubcontainer(this.getInventorySize(), (org.bukkit.entity.AbstractHorse) this.getBukkitEntity()); // CraftBukkit
         if (inventorysubcontainer != null) {
             inventorysubcontainer.removeListener(this);
             int i = Math.min(inventorysubcontainer.getContainerSize(), this.inventory.getContainerSize());
@@ -416,7 +419,7 @@ public abstract class EntityHorseAbstract extends EntityAnimal implements IInven
     }
 
     public int getMaxTemper() {
-        return 100;
+        return this.maxDomestication; // CraftBukkit - return stored max domestication instead of 100
     }
 
     @Override
@@ -487,7 +490,7 @@ public abstract class EntityHorseAbstract extends EntityAnimal implements IInven
         }
 
         if (this.getHealth() < this.getMaxHealth() && f > 0.0F) {
-            this.heal(f);
+            this.heal(f, RegainReason.EATING); // CraftBukkit
             flag = true;
         }
 
@@ -564,7 +567,7 @@ public abstract class EntityHorseAbstract extends EntityAnimal implements IInven
         super.aiStep();
         if (!this.level.isClientSide && this.isAlive()) {
             if (this.random.nextInt(900) == 0 && this.deathTime == 0) {
-                this.heal(1.0F);
+                this.heal(1.0F, RegainReason.REGEN); // CraftBukkit
             }
 
             if (this.canEatGrass()) {
@@ -838,6 +841,7 @@ public abstract class EntityHorseAbstract extends EntityAnimal implements IInven
         if (this.getOwnerUUID() != null) {
             nbttagcompound.putUUID("Owner", this.getOwnerUUID());
         }
+        nbttagcompound.putInt("Bukkit.MaxDomestication", this.maxDomestication); // CraftBukkit
 
         if (!this.inventory.getItem(0).isEmpty()) {
             nbttagcompound.put("SaddleItem", this.inventory.getItem(0).save(new NBTTagCompound()));
@@ -865,6 +869,11 @@ public abstract class EntityHorseAbstract extends EntityAnimal implements IInven
         if (uuid != null) {
             this.setOwnerUUID(uuid);
         }
+        // CraftBukkit start
+        if (nbttagcompound.contains("Bukkit.MaxDomestication")) {
+            this.maxDomestication = nbttagcompound.getInt("Bukkit.MaxDomestication");
+        }
+        // CraftBukkit end
 
         if (nbttagcompound.contains("SaddleItem", 10)) {
             ItemStack itemstack = ItemStack.of(nbttagcompound.getCompound("SaddleItem"));
@@ -942,6 +951,18 @@ public abstract class EntityHorseAbstract extends EntityAnimal implements IInven
 
     @Override
     public void handleStartJump(int i) {
+        // CraftBukkit start
+        float power;
+        if (i >= 90) {
+            power = 1.0F;
+        } else {
+            power = 0.4F + 0.4F * (float) i / 90.0F;
+        }
+        org.bukkit.event.entity.HorseJumpEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callHorseJumpEvent(this, power);
+        if (event.isCancelled()) {
+            return;
+        }
+        // CraftBukkit end
         this.allowStandSliding = true;
         this.standIfPossible();
         this.playJumpSound();

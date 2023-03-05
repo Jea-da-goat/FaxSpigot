@@ -32,4 +32,11 @@ public abstract class IRecipeComplex implements RecipeCrafting {
     public CraftingBookCategory category() {
         return this.category;
     }
+
+    // CraftBukkit start
+    @Override
+    public org.bukkit.inventory.Recipe toBukkitRecipe() {
+        return new org.bukkit.craftbukkit.inventory.CraftComplexRecipe(this);
+    }
+    // CraftBukkit end
 }
