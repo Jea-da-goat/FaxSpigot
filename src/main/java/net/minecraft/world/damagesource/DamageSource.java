@@ -1,16 +1,16 @@
 package net.minecraft.world.damagesource;
 
 import javax.annotation.Nullable;
-import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityLiving;
-import net.minecraft.world.entity.player.EntityHuman;
-import net.minecraft.world.entity.projectile.EntityArrow;
-import net.minecraft.world.entity.projectile.EntityFireballFireball;
-import net.minecraft.world.entity.projectile.EntityFireworks;
-import net.minecraft.world.entity.projectile.EntityWitherSkull;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Fireball;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.phys.Vec3D;
+import net.minecraft.world.phys.Vec3;
 
 public class DamageSource {
 
@@ -53,7 +53,7 @@ public class DamageSource {
     private boolean sweep;
 
     public boolean isSweep() {
-        return sweep;
+        return this.sweep;
     }
 
     public DamageSource sweep() {
@@ -62,80 +62,80 @@ public class DamageSource {
     }
     // CraftBukkit end
 
-    public static DamageSource fallingBlock(Entity entity) {
-        return (new EntityDamageSource("fallingBlock", entity)).damageHelmet();
+    public static DamageSource fallingBlock(Entity attacker) {
+        return (new EntityDamageSource("fallingBlock", attacker)).damageHelmet();
     }
 
-    public static DamageSource anvil(Entity entity) {
-        return (new EntityDamageSource("anvil", entity)).damageHelmet();
+    public static DamageSource anvil(Entity attacker) {
+        return (new EntityDamageSource("anvil", attacker)).damageHelmet();
     }
 
-    public static DamageSource fallingStalactite(Entity entity) {
-        return (new EntityDamageSource("fallingStalactite", entity)).damageHelmet();
+    public static DamageSource fallingStalactite(Entity attacker) {
+        return (new EntityDamageSource("fallingStalactite", attacker)).damageHelmet();
     }
 
-    public static DamageSource sting(EntityLiving entityliving) {
-        return new EntityDamageSource("sting", entityliving);
+    public static DamageSource sting(LivingEntity attacker) {
+        return new EntityDamageSource("sting", attacker);
     }
 
-    public static DamageSource mobAttack(EntityLiving entityliving) {
-        return new EntityDamageSource("mob", entityliving);
+    public static DamageSource mobAttack(LivingEntity attacker) {
+        return new EntityDamageSource("mob", attacker);
     }
 
-    public static DamageSource indirectMobAttack(Entity entity, @Nullable EntityLiving entityliving) {
-        return new EntityDamageSourceIndirect("mob", entity, entityliving);
+    public static DamageSource indirectMobAttack(Entity projectile, @Nullable LivingEntity attacker) {
+        return new IndirectEntityDamageSource("mob", projectile, attacker);
     }
 
-    public static DamageSource playerAttack(EntityHuman entityhuman) {
-        return new EntityDamageSource("player", entityhuman);
+    public static DamageSource playerAttack(Player attacker) {
+        return new EntityDamageSource("player", attacker);
     }
 
-    public static DamageSource arrow(EntityArrow entityarrow, @Nullable Entity entity) {
-        return (new EntityDamageSourceIndirect("arrow", entityarrow, entity)).setProjectile();
+    public static DamageSource arrow(AbstractArrow projectile, @Nullable Entity attacker) {
+        return (new IndirectEntityDamageSource("arrow", projectile, attacker)).setProjectile();
     }
 
-    public static DamageSource trident(Entity entity, @Nullable Entity entity1) {
-        return (new EntityDamageSourceIndirect("trident", entity, entity1)).setProjectile();
+    public static DamageSource trident(Entity trident, @Nullable Entity attacker) {
+        return (new IndirectEntityDamageSource("trident", trident, attacker)).setProjectile();
     }
 
-    public static DamageSource fireworks(EntityFireworks entityfireworks, @Nullable Entity entity) {
-        return (new EntityDamageSourceIndirect("fireworks", entityfireworks, entity)).setExplosion();
+    public static DamageSource fireworks(FireworkRocketEntity firework, @Nullable Entity attacker) {
+        return (new IndirectEntityDamageSource("fireworks", firework, attacker)).setExplosion();
     }
 
-    public static DamageSource fireball(EntityFireballFireball entityfireballfireball, @Nullable Entity entity) {
-        return entity == null ? (new EntityDamageSourceIndirect("onFire", entityfireballfireball, entityfireballfireball)).setIsFire().setProjectile() : (new EntityDamageSourceIndirect("fireball", entityfireballfireball, entity)).setIsFire().setProjectile();
+    public static DamageSource fireball(Fireball fireball, @Nullable Entity attacker) {
+        return attacker == null ? (new IndirectEntityDamageSource("onFire", fireball, fireball)).setIsFire().setProjectile() : (new IndirectEntityDamageSource("fireball", fireball, attacker)).setIsFire().setProjectile();
     }
 
-    public static DamageSource witherSkull(EntityWitherSkull entitywitherskull, Entity entity) {
-        return (new EntityDamageSourceIndirect("witherSkull", entitywitherskull, entity)).setProjectile();
+    public static DamageSource witherSkull(WitherSkull witherSkull, Entity attacker) {
+        return (new IndirectEntityDamageSource("witherSkull", witherSkull, attacker)).setProjectile();
     }
 
-    public static DamageSource thrown(Entity entity, @Nullable Entity entity1) {
-        return (new EntityDamageSourceIndirect("thrown", entity, entity1)).setProjectile();
+    public static DamageSource thrown(Entity projectile, @Nullable Entity attacker) {
+        return (new IndirectEntityDamageSource("thrown", projectile, attacker)).setProjectile();
     }
 
-    public static DamageSource indirectMagic(Entity entity, @Nullable Entity entity1) {
-        return (new EntityDamageSourceIndirect("indirectMagic", entity, entity1)).bypassArmor().setMagic();
+    public static DamageSource indirectMagic(Entity magic, @Nullable Entity attacker) {
+        return (new IndirectEntityDamageSource("indirectMagic", magic, attacker)).bypassArmor().setMagic();
     }
 
-    public static DamageSource thorns(Entity entity) {
-        return (new EntityDamageSource("thorns", entity)).setThorns().setMagic();
+    public static DamageSource thorns(Entity attacker) {
+        return (new EntityDamageSource("thorns", attacker)).setThorns().setMagic();
     }
 
     public static DamageSource explosion(@Nullable Explosion explosion) {
-        return explosion != null ? explosion(explosion.getDirectSourceEntity(), explosion.getIndirectSourceEntity()) : explosion((Entity) null, (Entity) null);
+        return explosion != null ? DamageSource.explosion(explosion.getDirectSourceEntity(), explosion.getIndirectSourceEntity()) : DamageSource.explosion((Entity) null, (Entity) null);
     }
 
-    public static DamageSource explosion(@Nullable Entity entity, @Nullable Entity entity1) {
-        return entity1 != null && entity != null ? (new EntityDamageSourceIndirect("explosion.player", entity, entity1)).setScalesWithDifficulty().setExplosion() : (entity != null ? (new EntityDamageSource("explosion", entity)).setScalesWithDifficulty().setExplosion() : (new DamageSource("explosion")).setScalesWithDifficulty().setExplosion());
+    public static DamageSource explosion(@Nullable Entity explosion, @Nullable Entity attacker) {
+        return attacker != null && explosion != null ? (new IndirectEntityDamageSource("explosion.player", explosion, attacker)).setScalesWithDifficulty().setExplosion() : (explosion != null ? (new EntityDamageSource("explosion", explosion)).setScalesWithDifficulty().setExplosion() : (new DamageSource("explosion")).setScalesWithDifficulty().setExplosion());
     }
 
-    public static DamageSource sonicBoom(Entity entity) {
-        return (new EntityDamageSource("sonic_boom", entity)).bypassArmor().bypassEnchantments().setMagic();
+    public static DamageSource sonicBoom(Entity attacker) {
+        return (new EntityDamageSource("sonic_boom", attacker)).bypassArmor().bypassEnchantments().setMagic();
     }
 
-    public static DamageSource badRespawnPointExplosion(Vec3D vec3d) {
-        return new DamageSourceNetherBed(vec3d);
+    public static DamageSource badRespawnPointExplosion(Vec3 pos) {
+        return new BadRespawnPointDamage(pos);
     }
 
     public String toString() {
@@ -184,8 +184,8 @@ public class DamageSource {
         return this.bypassEnchantments;
     }
 
-    protected DamageSource(String s) {
-        this.msgId = s;
+    protected DamageSource(String name) {
+        this.msgId = name;
     }
 
     @Nullable
@@ -235,12 +235,12 @@ public class DamageSource {
         return this;
     }
 
-    public IChatBaseComponent getLocalizedDeathMessage(EntityLiving entityliving) {
-        EntityLiving entityliving1 = entityliving.getKillCredit();
+    public Component getLocalizedDeathMessage(LivingEntity entity) {
+        LivingEntity entityliving1 = entity.getKillCredit();
         String s = "death.attack." + this.msgId;
         String s1 = s + ".player";
 
-        return entityliving1 != null ? IChatBaseComponent.translatable(s1, entityliving.getDisplayName(), entityliving1.getDisplayName()) : IChatBaseComponent.translatable(s, entityliving.getDisplayName());
+        return entityliving1 != null ? Component.translatable(s1, entity.getDisplayName(), entityliving1.getDisplayName()) : Component.translatable(s, entity.getDisplayName());
     }
 
     public boolean isFire() {
@@ -285,11 +285,11 @@ public class DamageSource {
     public boolean isCreativePlayer() {
         Entity entity = this.getEntity();
 
-        return entity instanceof EntityHuman && ((EntityHuman) entity).getAbilities().instabuild;
+        return entity instanceof Player && ((Player) entity).getAbilities().instabuild;
     }
 
     @Nullable
-    public Vec3D getSourcePosition() {
+    public Vec3 getSourcePosition() {
         return null;
     }
 }
